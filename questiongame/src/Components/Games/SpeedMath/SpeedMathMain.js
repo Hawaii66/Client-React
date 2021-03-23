@@ -39,9 +39,6 @@ function SpeedMathMain() {
     });
 
     useEffect(() => {
-        socket.on("GameSpeedMathIsAdmin", (data) => {
-
-        })
         socket.on("GameSpeedMathShowQuestion", (data) => {
             //Data = Question,  Question = Problem, answer
             setCurrentState(1);
