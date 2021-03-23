@@ -1,10 +1,88 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+
+//Components
+import GameSpeedMathQuestion from "./GameSpeedMathQuestion.js"
+import { socket } from "../../../Socket/socketEmit.js";
+import InGame from '../../SelectGameMenu/InTheGameInfo.js'
+import { GameSpeedMathStartGame, GameIsAdmin } from "../../../Socket/socketEmit.js";
+
+const StartGame = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const difficulty = formData.get("difficulty");
+    console.log(difficulty);
+    GameSpeedMathStartGame(difficulty);
+}
+
+const checkIfIsAdmin = (callback) => {
+    GameIsAdmin((data) => {
+        console.log(data);
+        callback(data);
+    });
+}
 
 function SpeedMathMain() {
-    return (
-        <div>
+    const [currentState, setCurrentState] = useState(0); // 0 = waiting // 1 = question // 2 = winner
+    const [currentQuestion, setCurrentQuestion] = useState(""); //Question = string
+    const [currentAnswer, setCurrentAnswer] = useState(0);  // Answer = number
+    const [isAdmin, setIsAdmin] = useState(false);
 
-        </div>
+    const setAnswer = (event) => {
+        event.preventDefault()
+        const formData = new FormData(event.target);
+        const answer = formData.get("answer");
+        console.log(answer);
+    }
+
+    checkIfIsAdmin((data) => {
+        setIsAdmin(data);
+    });
+
+    useEffect(() => {
+        socket.on("GameSpeedMathIsAdmin", (data) => {
+
+        })
+        socket.on("GameSpeedMathShowQuestion", (data) => {
+            //Data = Question,  Question = Problem, answer
+            setCurrentState(1);
+            setCurrentQuestion(data.question.problem)
+            console.log(data);
+        });
+    }, []);
+
+    console.log(socket)
+
+
+    if (currentState === 0) { // Select difficulty
+        if (isAdmin) {
+            return (
+                <div>
+                    <h1>Select Difficulty</h1>
+                    <form onSubmit={StartGame}>
+                        <select name="difficulty">
+                            <option value="1">Easy</option>
+                            <option value="2">Normal</option>
+                            <option value="3">Hard</option>
+                        </select>
+                        <button>Start the Game</button>
+                    </form>
+                </div>
+            )
+        }
+        return (
+            <InGame />
+        )
+    }
+    if (currentState === 1) { // See question
+        return (
+            <div>
+                <GameSpeedMathQuestion problem={currentQuestion} setAnswer={setAnswer} />
+            </div>
+        )
+    }
+    return ( // Other
+        <>
+        </>
     )
 }
 
