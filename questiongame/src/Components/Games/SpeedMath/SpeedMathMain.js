@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import GameSpeedMathQuestion from "./GameSpeedMathQuestion.js"
 import { socket } from "../../../Socket/socketEmit.js";
 import InGame from '../../SelectGameMenu/InTheGameInfo.js'
-import { GameSpeedMathStartGame, GameIsAdmin } from "../../../Socket/socketEmit.js";
+import { GameSpeedMathStartGame, GameIsAdmin, GameSpeedMathSubmitAnswer } from "../../../Socket/socketEmit.js";
 
 const StartGame = (event) => {
     event.preventDefault();
@@ -22,9 +22,9 @@ const checkIfIsAdmin = (callback) => {
 }
 
 function SpeedMathMain() {
-    const [currentState, setCurrentState] = useState(0); // 0 = waiting // 1 = question // 2 = winner
+    const [currentState, setCurrentState] = useState(0); // 0 = waiting // 1 = question // 2 = waiting for other // 3 winners
     const [currentQuestion, setCurrentQuestion] = useState(""); //Question = string
-    const [currentAnswer, setCurrentAnswer] = useState(0);  // Answer = number
+    const [correctAnswer, setCorrectAnswer] = useState(0);  // Answer = number
     const [isAdmin, setIsAdmin] = useState(false);
 
     const setAnswer = (event) => {
@@ -32,6 +32,12 @@ function SpeedMathMain() {
         const formData = new FormData(event.target);
         const answer = formData.get("answer");
         console.log(answer);
+        const toSend = {
+            correctAnswer,
+            answer
+        }
+        event.target.reset();
+        GameSpeedMathSubmitAnswer(toSend);
     }
 
     checkIfIsAdmin((data) => {
@@ -42,9 +48,14 @@ function SpeedMathMain() {
         socket.on("GameSpeedMathShowQuestion", (data) => {
             //Data = Question,  Question = Problem, answer
             setCurrentState(1);
-            setCurrentQuestion(data.question.problem)
+            setCurrentQuestion(data.question.problem);
+            setCorrectAnswer(data.question.answer);
             console.log(data);
         });
+        socket.on("GameSpeedMathHasAnswered", (data) => {
+            console.log(data);
+            setCurrentState(2);
+        })
     }, []);
 
     console.log(socket)
@@ -74,6 +85,14 @@ function SpeedMathMain() {
         return (
             <div>
                 <GameSpeedMathQuestion problem={currentQuestion} setAnswer={setAnswer} />
+            </div>
+        )
+    }
+    if (currentState === 2) {
+        return (
+            <div>
+                <h1>Waiting</h1>
+                <p>Waiting for other players to submit their answers</p>
             </div>
         )
     }

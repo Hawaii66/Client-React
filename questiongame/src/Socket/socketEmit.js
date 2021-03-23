@@ -51,3 +51,7 @@ export function GameIsAdmin(callback) {
         callback(data);
     });
 }
+
+export function GameSpeedMathSubmitAnswer(data) {
+    socket.emit("GameSpeedMathSubmitAnswer", (data));
+}
