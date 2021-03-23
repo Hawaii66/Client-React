@@ -13,4 +13,11 @@ export function ShowGames(data, setShowGame) {
         }
         setShowGame(toSend);
     }
+    if (data === 2) { //Speed Math
+        const toSend = {
+            id: 2,
+            bool: true
+        }
+        setShowGame(toSend);
+    }
 }

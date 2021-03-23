@@ -3,6 +3,7 @@ import React from 'react'
 //GAMES
 import Game1T2L from "../Games/1Truth2LiesGame/Game1Truth2LiesMain.js";
 import GameLOM from "../Games/LoveOMeterGame/GameLoveOMeterMain.js";
+import GameSpeedMath from "../Games/SpeedMath/SpeedMathMain.js";
 
 function GamePreloader({ gameIndex }) {
 
@@ -25,6 +26,13 @@ function GamePreloader({ gameIndex }) {
         return (
             <div>
                 <GameLOM />
+            </div>
+        )
+    }
+    if (gameIndex === 2) {
+        return (
+            <div>
+                <GameSpeedMath />
             </div>
         )
     }
