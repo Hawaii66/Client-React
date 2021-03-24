@@ -55,7 +55,13 @@ function SpeedMathMain() {
         socket.on("GameSpeedMathHasAnswered", (data) => {
             console.log(data);
             setCurrentState(2);
-        })
+        });
+        socket.on("GameSpeedMathNextQuestion", (data) => {
+            setCurrentState(1);
+            setCurrentQuestion(data.problem);
+            setCorrectAnswer(data.answer);
+            console.log(data);
+        });
     }, []);
 
     console.log(socket)
