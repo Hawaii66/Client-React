@@ -10,6 +10,7 @@ function GameLoveOMeterMain() {
     const [Name1, setName1] = useState("");
     const [Name2, setName2] = useState("");
     const [circleColor, setCircleColor] = useState();
+    const [usePercent, setUsePercent] = useState(true);
 
     const CalculateOnClick = e => {
         e.preventDefault();
@@ -29,6 +30,12 @@ function GameLoveOMeterMain() {
                     preMadeValue = element.value;
                     break;
                 }
+            } if (element.name1.toString() === Name2.toString()) {
+                if (element.name2.toString() === Name1.toString()) {
+                    ExistsInPreMade = true;
+                    preMadeValue = element.value;
+                    break;
+                }
             }
         }
 
@@ -38,7 +45,6 @@ function GameLoveOMeterMain() {
             let randomDecimalWithSeed = randomWithSeed();
             randomDecimalWithSeed = Math.floor(randomDecimalWithSeed * 101);
             setLoveValue(randomDecimalWithSeed);
-
 
             if (randomDecimalWithSeed < 11) {
                 setCircleColor("#2c3e50");
@@ -65,6 +71,12 @@ function GameLoveOMeterMain() {
                 setCircleColor("#e74c3c");
             }
         }
+
+        if (typeof preMadeValue === "string" || preMadeValue instanceof String) {
+            setUsePercent(false);
+        } else {
+            setUsePercent(true);
+        }
     }
 
     const onChangeName1 = event => {
@@ -82,7 +94,7 @@ function GameLoveOMeterMain() {
                     color={circleColor}
                 />
             </div>
-            <h1>{LoveValue}%</h1>
+            <h1>{LoveValue}{usePercent ? "%" : null}</h1>
             <form id="GameLOMForm" onSubmit={CalculateOnClick}>
                 <input type="text" placeholder="Name 1" onChange={onChangeName1} />
                 <input type="text" placeholder="Name 2" onChange={onChangeName2} />
